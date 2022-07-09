@@ -118,6 +118,8 @@ class UserController extends Controller
         $this->id = $id;
         $rules = $this->user->rules();
 
+        $rules['email'] = 'required|unique:users,email,'.$this->id;
+
         $rules['cpfcnpj'] = [
             "required",
             Rule::unique('users')->where(function ($query) {
@@ -136,10 +138,12 @@ class UserController extends Controller
             }),
         ];
 
+        // dd($rules);
+
         $dynamicRules = array();
 
         if ($request->method() === 'PATCH') {
-            foreach ($this->rules() as $input => $rules) {
+            foreach ($rules as $input => $rules) {
                 if (array_key_exists($input, $request->all())) {
                     $dynamicRules[$input] = $rules;
                 }
@@ -147,7 +151,7 @@ class UserController extends Controller
 
             $request->validate($dynamicRules);
         } else {
-            $request->validate($this->rules($request));
+            $request->validate($rules);
         }
     }
 
@@ -160,39 +164,5 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    public function rules(Request $request){
-        $this->request = $request;
-        return [
-            'name' => "required",
-            'email' => "required|unique:users,email,".$request->id,
-            'password' => "required",
-            "cpfcnpj" => [
-                "required",
-                Rule::unique('users')->where(function ($query) {
-                    return $query
-                        ->where('cooperativa', $this->request->cooperativa)
-                        ->whereNotIn('id', [$this->request->id]);
-                }),
-            ],
-            "cooperativa" => [
-                "required",
-                Rule::unique('users')->where(function ($query) {
-                    return $query
-                        ->where('cpfcnpj', $this->request->cpfcnpj)
-                        ->whereNotIn('id', [$this->request->id]);
-                }),
-            ],
-            "nascimento" => "required",
-            "conta" => "required",
-            "sexo" => "required",
-            "pai" => "required",
-            "mae" => "required",
-            "status" => "required",
-            "token" => "required",
-            "matricula_empresa" => "required",
-            "nome_empresa" => "required",
-        ];
     }
 }

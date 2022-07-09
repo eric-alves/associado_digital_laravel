@@ -76,7 +76,4 @@ class User extends Authenticatable
             "nome_empresa" => "required",
         ];
     }
-
-    // email' => Rule::unique('users')->where(function ($query) {
-    //     return $query->where('account_id', 1);
 }
