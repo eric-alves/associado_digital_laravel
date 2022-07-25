@@ -20,7 +20,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(["users" => $this->user->get()], 200);
+        return response()->json(["users" => $this->user->with("documentos")->get()], 200);
     }
 
     /**
@@ -153,6 +153,12 @@ class UserController extends Controller
         } else {
             $request->validate($rules);
         }
+
+        $user->fill($request->all());
+        
+        $user->save();
+
+        return response()->json($user, 200);
     }
 
     /**

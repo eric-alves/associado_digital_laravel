@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Documento;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentoController extends Controller
 {
+    public function __construct(Documento $documento){
+        $this->documento = $documento;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +29,7 @@ class DocumentoController extends Controller
      */
     public function create()
     {
-        //
+        return response()->json($this->documento->all(), 200);
     }
 
     /**
@@ -35,7 +40,18 @@ class DocumentoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate($this->documento->rules());
+        $image = $request->file("imagem");
+        $imagem_urn = $image->store("docs/".$request->user_id, "public");
+
+        $documento = $this->documento->create([
+            "user_id" => $request->user_id,
+            "tipo" => $request->tipo,
+            "status" => 0,
+            "imagem" => $imagem_urn
+        ]);
+
+        return response()->json($documento, 201);
     }
 
     /**

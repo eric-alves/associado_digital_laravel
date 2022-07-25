@@ -15,9 +15,14 @@ class CreateDocumentosTable extends Migration
     {
         Schema::create('documentos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->integer("tipo");
             $table->integer("status");
+            $table->string("imagem");
             $table->timestamps();
+
+            //foreign key (constraints)
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

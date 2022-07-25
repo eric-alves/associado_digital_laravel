@@ -76,4 +76,9 @@ class User extends Authenticatable
             "nome_empresa" => "required",
         ];
     }
+
+    // Um user possui vários documentos
+    public function documentos(){
+        return $this->hasMany("App\Models\Documento");
+    }
 }
